@@ -1,0 +1,177 @@
+{
+  "name": "AI 일반 챗봇-배포용 v1",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "authentication": "n8nUserAuth",
+        "initialMessages": "안녕하세요! 👋 무엇을 도와드릴까요?",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -1424,
+        816
+      ],
+      "id": "09bf5666-35f2-49e5-b0a2-4421d1e392ba",
+      "name": "When chat message received",
+      "webhookId": "a055fc14-fa1f-417f-95d8-c061dc3e685d"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -1232,
+        816
+      ],
+      "id": "44f60111-bd84-4b1f-b175-fefe393bfb7d",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -1344,
+        1024
+      ],
+      "id": "90a4ef43-e204-4abe-b8b4-f70f5c0e63c6",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "q2ClI16nTFbPzt9J",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -1200,
+        1024
+      ],
+      "id": "e664dfd3-595d-4a87-bd5e-a52897d632e3",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "content": "## Google Sheet 연결",
+        "height": 512,
+        "width": 688,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1520,
+        720
+      ],
+      "typeVersion": 1,
+      "id": "1a91879e-1cd0-4358-a2e3-f003b2dab9bd",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "19WGkT9JFtOoLCAdCUQlkAmjdipIVyIZJoDH13yCquuo",
+          "mode": "list",
+          "cachedResultName": "AI 뉴스 목록",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/19WGkT9JFtOoLCAdCUQlkAmjdipIVyIZJoDH13yCquuo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "시트1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/19WGkT9JFtOoLCAdCUQlkAmjdipIVyIZJoDH13yCquuo/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        -1056,
+        1024
+      ],
+      "id": "003ae121-dda4-4010-9c93-0a0ebc83321c",
+      "name": "스프레드 시트 연결",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "CyvFivDl0OZHe4OK",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "스프레드 시트 연결": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "fa7141dc-f35b-4ff6-8ef0-1598742ad9e5",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6a9739e3f09ef3db6c5a0d4227f41ec01aa52b7bbab4b528e77147e555f60ecc"
+  },
+  "id": "kUVsYD5A1TOpmZHH",
+  "tags": []
+}
