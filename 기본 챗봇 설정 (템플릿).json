@@ -1,0 +1,209 @@
+{
+  "name": "기본 챗봇 설정 (템플릿)",
+  "nodes": [
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5",
+          "mode": "list",
+          "cachedResultName": "gpt-5"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -384,
+        400
+      ],
+      "id": "aa834d2c-29f1-40c8-9880-dc2611d6e4f5",
+      "name": "OpenAI Chat Model"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "너는 친절하고 명랑한 비서야. 사용자의 요청에 따라 적절한 Tool을 적극적으로 활용해서 답변해줘.\n\n사용자가 'AI 뉴스'와 유사한 키워드를 언급하면 반드시 Google Sheets의 top 3 컨텐츠를 읽어와서 제공해줘."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -288,
+        96
+      ],
+      "id": "36204840-6e36-4daa-93da-21cde3ba3b55",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -192,
+        400
+      ],
+      "id": "be1a60da-3ce1-43ad-9fa8-c505c7b5d03b",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "content": "### 도구 연결",
+        "height": 272,
+        "width": 208
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -64,
+        288
+      ],
+      "typeVersion": 1,
+      "id": "18a014f3-f7b3-42b5-b063-52b5d658ce17",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "### AI 성격/행동 설정 (옵션)\n",
+        "height": 256,
+        "width": 352
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -336,
+        0
+      ],
+      "typeVersion": 1,
+      "id": "a79179cb-5db0-451e-bc4f-af4d266fe6c1",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "content": "### AI 챗봇 설정\n1. 인증 설정 (선택)\n2. 인사말 설정 (선택)",
+        "height": 256,
+        "width": 192
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -560,
+        0
+      ],
+      "typeVersion": 1,
+      "id": "453837d7-6640-44a2-954b-4d48cc3088b0",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "안녕! 뭘 도와줄까?",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -512,
+        96
+      ],
+      "id": "a12d98dd-8638-4455-993d-64affda9e887",
+      "name": "채팅 시작",
+      "webhookId": "6843bf2a-ff18-4b03-9a7a-ec9d36a0dcfc"
+    },
+    {
+      "parameters": {
+        "content": "### GPT 인증키 설정",
+        "height": 272,
+        "width": 208
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -448,
+        288
+      ],
+      "typeVersion": 1,
+      "id": "7eb37ac7-b558-473c-ac6c-91d54ba67297",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "",
+          "mode": "list",
+          "cachedResultName": "",
+          "cachedResultUrl": ""
+        }
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        0,
+        400
+      ],
+      "id": "33493647-4617-4a1f-bfb3-4a0ecc4d4621",
+      "name": "뉴스 정보 연결"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "채팅 시작": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "뉴스 정보 연결": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "7dd3f423-4bb3-4416-997c-539413ef8554",
+  "meta": {
+    "instanceId": "6a9739e3f09ef3db6c5a0d4227f41ec01aa52b7bbab4b528e77147e555f60ecc"
+  },
+  "id": "fqAz4VB8Ux20pUSp",
+  "tags": []
+}
