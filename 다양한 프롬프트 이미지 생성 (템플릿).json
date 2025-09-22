@@ -1,0 +1,634 @@
+{
+  "name": "다양한 프롬프트 이미지 생성 (템플릿)",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "인물사진을 업로드 하고 정보를 입력해주세요!",
+        "formDescription": "얼굴/전신이 잘 드러난 사진을 올려주세요! ",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "uploaded_img",
+              "fieldType": "file",
+              "acceptFileTypes": ".jpg, .png, .jpeg",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "name",
+              "placeholder": "이름을 입력해주세요. (영어 권장)",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "props",
+              "placeholder": "어울릴만한 소품을 2-3개 정도 입력해주세요.",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        -80,
+        336
+      ],
+      "id": "847fdf05-de8c-4942-8e6a-3c69a9e42cde",
+      "name": "On form submission",
+      "webhookId": "12e26d18-f3b5-4e78-9df0-77d072409b50"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/images/edits",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "gpt-image-1"
+            },
+            {
+              "name": "prompt",
+              "value": "=위 사진의 인물을 마치 판매하고 있는\n3D 아트토이 피규어처럼 제작해 줘.\n\n실물과는 20% 정도 닮은 정도로\n귀여운 3D 캐릭터처럼 표현해 주면 좋겠어.\n\n박스 안에는 \\\"{{ $json.props }}\\\"을\n같이 넣어줘.\n모든 사물은 투명 플라스틱 틀에 넣어서\n움직이지 않게 장난감 포장처럼 만들어줘.\n\n박스 디자인 하단에는\n\\\"{{ $json.name }}\\\" 라고 작게 적어주고\n잘 어울리는 색상을 골라서 만들어줘.\n\n전체적으로 파스텔톤, 무광, 3D로 제작해줘."
+            },
+            {
+              "parameterType": "formBinaryData",
+              "name": "image",
+              "inputDataFieldName": "uploaded_img"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        320,
+        0
+      ],
+      "id": "bd49adf3-0934-4a4c-af30-cc8b39461bd3",
+      "name": "이미지 요청 1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/images/edits",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "gpt-image-1"
+            },
+            {
+              "name": "prompt",
+              "value": "=Transform the person in the photo into a 3D LEGO minifigure packaging box style, presented in isometric perspective. Label the box with the title \\\"{{ $json.name }}\\\". Inside the box, display the 3d LEGO minifigure based on the person in the photo, along with their essential items \\\"{{ $json.props }}\\\" as LEGO accessories. Beside the box, also display the actual LEGO minifigure itself, unpackaged, rendered in a realistic and vivid style.\n"
+            },
+            {
+              "parameterType": "formBinaryData",
+              "name": "image",
+              "inputDataFieldName": "uploaded_img"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        320,
+        224
+      ],
+      "id": "5dd45fe0-abf2-4030-97e7-a27fb9190b20",
+      "name": "이미지 요청 2",
+      "credentials": {
+        "openAiApi": {
+          "id": "O5lqdgqEbkhcg1ni",
+          "name": "Vibe-test 크레덴셜"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/images/edits",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "gpt-image-1"
+            },
+            {
+              "name": "prompt",
+              "value": "study the pixel art style of everskies, and imitate the way it depicts body shape, facial features and expressions, clothing, and hairstyle. using the hairstyle, outfit and accessories of the person in the attached image, create a full body character illustration. the background should be transparent (png), and only the complete character should be included. The character would be full size. Shouldn't be cropped or cut on the bottom and top (there should be a little gap. white color in character shouldn't be png color. Should be colored."
+            },
+            {
+              "parameterType": "formBinaryData",
+              "name": "image",
+              "inputDataFieldName": "uploaded_img"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        320,
+        448
+      ],
+      "id": "d3d7a65e-f0ef-4d39-a352-e4c429172870",
+      "name": "이미지 요청 3",
+      "credentials": {
+        "openAiApi": {
+          "id": "O5lqdgqEbkhcg1ni",
+          "name": "Vibe-test 크레덴셜"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/images/edits",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "gpt-image-1"
+            },
+            {
+              "name": "prompt",
+              "value": "=이 사진의 인물을 귀여운 3D 캐릭터로 만들어줘.\n장난감 스타일의 블리스터 패키지를 만들고,\n박스 상단에는 \\\"{{ $json.name }}\\\"라고 쓴 뒤\n사진 인물의 성별을 고려해서 이름 뒷면에 핑크색 리본이나 캡 모자 달아줘.\n\n전체적인 상자는 한 가지의 파스텔톤 색상을 골라서 만들어줘.\n\n패키지 안에 왼쪽에는 \\\"{{ $json.props }}\\\" 중 한 가지를 넣어주고 아래에 라벨지로 그 이름을 영어로 작게 써줘.\n\n그 위에는 \\\"{{ $json.props }}\\\" 중 다른 하나를 골라서 넣어줘.\n\n소품, 사람은 모두 각각 칸에 나눠져서\n들어있게 만들어주고,\n사람은 가운데 위치하게 해줘.\n\n전체적인 이미지는 귀여운\n3D 치비 스타일(chibi style)로 만들어줘."
+            },
+            {
+              "parameterType": "formBinaryData",
+              "name": "image",
+              "inputDataFieldName": "uploaded_img"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        320,
+        672
+      ],
+      "id": "e1d965f1-097a-46e3-a89d-17beed98cb13",
+      "name": "이미지 요청 4",
+      "credentials": {
+        "openAiApi": {
+          "id": "O5lqdgqEbkhcg1ni",
+          "name": "Vibe-test 크레덴셜"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "data[0].b64_json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        512,
+        0
+      ],
+      "id": "c95854d3-b4e3-4f08-b9e0-d5cde168f651",
+      "name": "파일 변환 1"
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "data[0].b64_json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        512,
+        224
+      ],
+      "id": "76d0f49e-4ea5-4d88-9655-6f40d175b2dd",
+      "name": "파일 변환 2"
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "data[0].b64_json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        512,
+        448
+      ],
+      "id": "fe5ab506-7d42-4e71-a25a-6e2b33747007",
+      "name": "파일 변환 3"
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "data[0].b64_json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        512,
+        672
+      ],
+      "id": "1b04ad31-0253-4ef9-bce3-06646f9efe9c",
+      "name": "파일 변환 4"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.imgbb.com/1/upload?key=9bfc3355a506399626ee74e1fba19c11",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "image",
+              "inputDataFieldName": "data"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        704,
+        0
+      ],
+      "id": "74906fe7-4676-46eb-bc24-c888ea26f3a5",
+      "name": "이미지 업로드-주소받기 1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.imgbb.com/1/upload?key=9bfc3355a506399626ee74e1fba19c11",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "image",
+              "inputDataFieldName": "data"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        704,
+        224
+      ],
+      "id": "54a212a0-fba6-4d57-bba0-1319b8a16d22",
+      "name": "이미지 업로드-주소받기 2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.imgbb.com/1/upload?key=9bfc3355a506399626ee74e1fba19c11",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "image",
+              "inputDataFieldName": "data"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        704,
+        448
+      ],
+      "id": "b017a81b-451b-461e-b995-6259c361f458",
+      "name": "이미지 업로드-주소받기 3"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.imgbb.com/1/upload?key=9bfc3355a506399626ee74e1fba19c11",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "image",
+              "inputDataFieldName": "data"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        704,
+        672
+      ],
+      "id": "7bf49ad6-73b5-4266-ad2a-7194182892d6",
+      "name": "이미지 업로드-주소받기 4"
+    },
+    {
+      "parameters": {
+        "numberInputs": 4
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        992,
+        288
+      ],
+      "id": "933c6a20-9a20-4802-b7e6-3b331256a97a",
+      "name": "노드 통합"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1184,
+        320
+      ],
+      "id": "0d1e40a9-0529-4501-91ed-4e72af510186",
+      "name": "데이터 통합"
+    },
+    {
+      "parameters": {
+        "subject": "📬 AI 이미지 배달왔어요! ",
+        "message": "=<div>   <img src=\"{{ $json.data[0].data.medium.url }}\" alt=\"data\" border=\"0\" style=\"max-width: 100%; height: auto;\" /> </div>\n\n<div>   <img src=\"{{ $json.data[1].data.medium.url }}\" alt=\"data\" border=\"0\" style=\"max-width: 100%; height: auto;\" /> </div>\n\n<div>   <img src=\"{{ $json.data[2].data.medium.url }}\" alt=\"data\" border=\"0\" style=\"max-width: 100%; height: auto;\" /> </div>\n\n<div>   <img src=\"{{ $json.data[3].data.medium.url }}\" alt=\"data\" border=\"0\" style=\"max-width: 100%; height: auto;\" /> </div>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1360,
+        320
+      ],
+      "id": "b05d83e9-9706-45d1-9f56-086d19457bed",
+      "name": "메일 발송",
+      "webhookId": "e8d523ee-61d9-4b86-a34a-b91043c156e2"
+    },
+    {
+      "parameters": {
+        "content": "### Gmail 설정\n1. 인증키 설정\n2. 받는 사람 설정",
+        "height": 272,
+        "width": 192
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1312,
+        208
+      ],
+      "typeVersion": 1,
+      "id": "121e77c8-2dae-4edb-94ea-f9e6e30e25ed",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "### OpenAI 인증키 설정",
+        "height": 928,
+        "width": 224
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        256,
+        -64
+      ],
+      "typeVersion": 1,
+      "id": "05840bd1-b950-4a8e-b4d0-4437bafbb1dd",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "이미지 요청 1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "이미지 요청 2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "이미지 요청 3",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "이미지 요청 4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "이미지 요청 1": {
+      "main": [
+        [
+          {
+            "node": "파일 변환 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "이미지 요청 2": {
+      "main": [
+        [
+          {
+            "node": "파일 변환 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "이미지 요청 3": {
+      "main": [
+        [
+          {
+            "node": "파일 변환 3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "이미지 요청 4": {
+      "main": [
+        [
+          {
+            "node": "파일 변환 4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "파일 변환 1": {
+      "main": [
+        [
+          {
+            "node": "이미지 업로드-주소받기 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "파일 변환 2": {
+      "main": [
+        [
+          {
+            "node": "이미지 업로드-주소받기 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "파일 변환 3": {
+      "main": [
+        [
+          {
+            "node": "이미지 업로드-주소받기 3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "파일 변환 4": {
+      "main": [
+        [
+          {
+            "node": "이미지 업로드-주소받기 4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "이미지 업로드-주소받기 1": {
+      "main": [
+        [
+          {
+            "node": "노드 통합",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "이미지 업로드-주소받기 2": {
+      "main": [
+        [
+          {
+            "node": "노드 통합",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "이미지 업로드-주소받기 3": {
+      "main": [
+        [
+          {
+            "node": "노드 통합",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "이미지 업로드-주소받기 4": {
+      "main": [
+        [
+          {
+            "node": "노드 통합",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "노드 통합": {
+      "main": [
+        [
+          {
+            "node": "데이터 통합",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "데이터 통합": {
+      "main": [
+        [
+          {
+            "node": "메일 발송",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "d3ebe1b8-7820-4b52-b247-c5fd9dfcc39f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6a9739e3f09ef3db6c5a0d4227f41ec01aa52b7bbab4b528e77147e555f60ecc"
+  },
+  "id": "T7mH80SUhIwUTn7w",
+  "tags": []
+}
