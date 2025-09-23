@@ -1,0 +1,550 @@
+{
+  "name": "뉴스요약 발송 (템플릿)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -3600,
+        64
+      ],
+      "id": "30ffe5fc-e9e5-49fb-adff-624ef4abbbb8",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -3200,
+        64
+      ],
+      "id": "2c9d24c5-3db2-4bfa-b92e-d1a244b3bac1",
+      "name": "키워드 수만큼 반복"
+    },
+    {
+      "parameters": {
+        "url": "https://openapi.naver.com/v1/search/news",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "query",
+              "value": "={{ $json.keyword }}"
+            },
+            {
+              "name": "display",
+              "value": "10"
+            },
+            {
+              "name": "sort",
+              "value": "sim"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Naver-Client-Id"
+            },
+            {
+              "name": "X-Naver-Client-Secret"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2912,
+        256
+      ],
+      "id": "f1b12d11-f9a6-494a-9426-5a3760d677cc",
+      "name": "네이버 뉴스 검색"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "",
+          "mode": "list",
+          "cachedResultName": "",
+          "cachedResultUrl": ""
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -3408,
+        64
+      ],
+      "id": "a6660769-9533-4e1a-ab96-73ac0e90975f",
+      "name": "키워드 불러오기",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "content": "### 네이버 검색 설정\n1. 검색 건수/필터링 기준: sim/date\n2. API 키 입력 ",
+        "height": 288,
+        "width": 272
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2992,
+        160
+      ],
+      "typeVersion": 1,
+      "id": "55e59578-c806-425a-8954-5e7ca3f6c4f0",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "### OpenAI 노드 설정\n1. API 인증키 설정\n2. (선택) System Prompt 변경 ",
+        "height": 272,
+        "width": 272
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2304,
+        -432
+      ],
+      "typeVersion": 1,
+      "id": "82aca235-c615-4120-b508-b61f761e116b",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "### Gmail 설정\n1. 인증키 설정\n2. 받는 사람 설정",
+        "height": 272,
+        "width": 192
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1168,
+        -432
+      ],
+      "typeVersion": 1,
+      "id": "89a92a87-7b23-4927-af6b-3ecfb79a88a3",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "items",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -2928,
+        -80
+      ],
+      "id": "a0f0ea82-63ba-4507-ad57-e68363f8df06",
+      "name": "데이터 쪼개기"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "# AI 뉴스 다이제스트 생성 시스템\n당신은 AI 업계 뉴스를 재미있고 간결하게 요약하는 전문가입니다. 제공받은 모든 뉴스의 헤드라인과 요약본을 종합해서 정확한 출력 형식으로 요약을 제공해주세요.\n\n## 작성 스타일\n- **톤**: 반말, 친근하고 캐주얼한 말투\n- **길이**: 각 뉴스는 1-2문장으로 극도로 간결하게  \n- **분위기**: 유튜브 쇼츠 같은 빠르고 재미있는 느낌\n- **이모지**: 각 섹션마다 적절한 이모지 사용\n- **종합요약은 3줄만**: 종합요약을 3줄로 작성\n- **흥미로운 뉴스 5개**: 흥미로운 뉴스는 5개 선정해서 링크와 제공\n- **구조 템플릿 헤더 준수**: 반드시 헤더 제목을 준수하고, 헤더 하위 내용은 text로 출력하세요.",
+              "role": "system"
+            },
+            {
+              "content": "# 출력 형식\n🗞️ 종합요약\n- \n- \n- \n\n🔥 흥미로운 뉴스\n제목1 \n링크1\n\n제목2\n링크2\n\n제목3\n링크3\n\n제목4 \n링크4\n\n제목5 \n링크5",
+              "role": "system"
+            },
+            {
+              "content": "=# 분석 대상\n{{ JSON.stringify($json.data) }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -2272,
+        -320
+      ],
+      "id": "a1e9172f-4721-4eb6-81a1-d50f5d9d66a8",
+      "name": "GPT 뉴스 요약 요청",
+      "credentials": {
+        "openAiApi": {
+          "id": "j59SQHCV35VLfCM4",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 이전 노드의 첫 번째 아이템에서 content를 직접 가져옵니다.\nconst content = $input.first().json.message.content;\n\n// 1. 특정 제목들을 <h3> 태그로 감싸서 크고 굵게 만듭니다.\nlet styledContent = content.replace('🗞️ 종합요약', '<h3>🗞️ 종합요약</h3>');\nstyledContent = styledContent.replace('🔥 흥미로운 뉴스', '<h3>🔥 흥미로운 뉴스</h3>');\n\n// 2. 전체 텍스트의 줄바꿈(\\n)을 HTML 태그(<br>)로 변경합니다.\nconst htmlContent = styledContent.replace(/\\n/g, '<br>');\n\n// 다음 노드로 전달할 데이터를 구성합니다.\nreturn {\n  json: {\n    ...$input.first().json,\n    htmlContent: htmlContent\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1920,
+        -512
+      ],
+      "id": "9320d69c-bdad-41d6-9962-1ff459d5c02d",
+      "name": "요약 결과 HTML 서식"
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "model": "gpt-image-1",
+        "prompt": "=다음 내용 중에 종합요약에 해당하는 부분에 알맞는 일러스트를 그려줘.\n{{ $json.message.content }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -1920,
+        -112
+      ],
+      "id": "22524fb2-2cb8-4688-8730-43882240382b",
+      "name": "썸네일 이미지 제작"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.imgbb.com/1/upload?key=9bfc3355a506399626ee74e1fba19c11",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "image",
+              "inputDataFieldName": "data"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1696,
+        -112
+      ],
+      "id": "0c390adf-8939-4a44-ab98-01fbc887658c",
+      "name": "이미지 업로드-주소받기"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -1472,
+        -320
+      ],
+      "id": "b208d98d-b23c-4cd4-9e57-6e3dd01cb22e",
+      "name": "노드 결과 통합"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        -1312,
+        -320
+      ],
+      "id": "60016b72-3a85-4ab3-bfcc-36266c8a7957",
+      "name": "노드 데이터 통합"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        -2496,
+        -320
+      ],
+      "id": "272f67c8-0118-48b7-99dd-c0fd47e92e24",
+      "name": "뉴스 데이터 통합"
+    },
+    {
+      "parameters": {
+        "subject": "=🗞️ 오늘의 뉴스요약 ({{ $now.format('yyyy-LL-dd') }})",
+        "message": "=<div>\n  <img src=\"{{ $json.data[1].data.medium.url }}\" alt=\"data\" border=\"0\" style=\"max-width: 70%; height: auto;\" />\n</div>\n<div>\n  {{ $json.data[0].htmlContent }}\n</div>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -1120,
+        -320
+      ],
+      "id": "33333e01-ff70-4bdd-bac3-296c781fc2f5",
+      "name": "메일 발송",
+      "webhookId": "8fa2280a-971b-4d28-b655-56344b1b2b87"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -2480,
+        144
+      ],
+      "id": "79f52add-63bd-4851-9ab3-0a7a56bc6d2b",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "3xVQNSB3B1lz1R11",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "### 구글 시트 설정\n1. 인증 설정\n2. 저장 파일/시트/컬럼 설정",
+        "height": 288,
+        "width": 272
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2560,
+        32
+      ],
+      "typeVersion": 1,
+      "id": "c5352fb6-4b53-4799-8e1a-270b61fa8e40",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "content": "### 구글 시트 설정\n1. 인증 설정\n2. 불러올 파일/시트 설정",
+        "height": 288,
+        "width": 192
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -3456,
+        -64
+      ],
+      "typeVersion": 1,
+      "id": "75962da9-8644-429e-af32-72d6aec1d849",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "content": "### OpenAI 노드 설정\n1. API 인증키 설정\n2. (선택) System Prompt 변경 ",
+        "height": 272,
+        "width": 192
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1968,
+        -224
+      ],
+      "typeVersion": 1,
+      "id": "1c82f5ad-6c36-4e1f-aac7-79fdce0cee07",
+      "name": "Sticky Note1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "키워드 불러오기",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "키워드 수만큼 반복": {
+      "main": [
+        [
+          {
+            "node": "데이터 쪼개기",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "네이버 뉴스 검색",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "네이버 뉴스 검색": {
+      "main": [
+        [
+          {
+            "node": "키워드 수만큼 반복",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "키워드 불러오기": {
+      "main": [
+        [
+          {
+            "node": "키워드 수만큼 반복",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "데이터 쪼개기": {
+      "main": [
+        [
+          {
+            "node": "뉴스 데이터 통합",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT 뉴스 요약 요청": {
+      "main": [
+        [
+          {
+            "node": "썸네일 이미지 제작",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "요약 결과 HTML 서식",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "요약 결과 HTML 서식": {
+      "main": [
+        [
+          {
+            "node": "노드 결과 통합",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "썸네일 이미지 제작": {
+      "main": [
+        [
+          {
+            "node": "이미지 업로드-주소받기",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "이미지 업로드-주소받기": {
+      "main": [
+        [
+          {
+            "node": "노드 결과 통합",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "노드 결과 통합": {
+      "main": [
+        [
+          {
+            "node": "노드 데이터 통합",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "노드 데이터 통합": {
+      "main": [
+        [
+          {
+            "node": "메일 발송",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "뉴스 데이터 통합": {
+      "main": [
+        [
+          {
+            "node": "GPT 뉴스 요약 요청",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "eb5f0852-7d16-41f9-8a91-03306f95a807",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6a9739e3f09ef3db6c5a0d4227f41ec01aa52b7bbab4b528e77147e555f60ecc"
+  },
+  "id": "ndKpvaz7x94fJssb",
+  "tags": []
+}
